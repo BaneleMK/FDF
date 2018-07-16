@@ -6,7 +6,7 @@
 /*   By: bmkhize <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/09 11:42:17 by bmkhize           #+#    #+#             */
-/*   Updated: 2018/07/12 17:08:46 by bmkhize          ###   ########.fr       */
+/*   Updated: 2018/07/16 12:23:53 by bmkhize          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,17 @@ int		get_data(int fd, char **line)
 int		fdf(int fd)
 {
 	t_array newl;
-	t_mlx 	mlxl;
+//	t_mlx 	mlxl;
 	
 	int 	n;
 	if ((n = checknmake(&newl, fd)) != 1)
 		return (n);
-	mlxl.i = 0;
+/*	mlxl.i = 0;
 	while (newl.arrays[mlxl.i])
 	{
 		ft_putendl(newl.arrays[mlxl.i]);
 		mlxl.i++;
-	}
+	}*/
 	return (1);
 }
 
