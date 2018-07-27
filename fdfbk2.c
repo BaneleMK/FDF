@@ -6,7 +6,7 @@
 /*   By: bmkhize <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/07/09 11:42:17 by bmkhize           #+#    #+#             */
-/*   Updated: 2018/07/27 15:45:58 by bmkhize          ###   ########.fr       */
+/*   Updated: 2018/07/25 15:56:26 by bmkhize          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,32 +27,59 @@ void	mlx_init_fun(t_mlx *mlxl)
 	mlxl->win = mlx_new_window(mlxl->init, 800, 800, "FDF");
 }
 
-//void	drawDDA()
-void	drawDDA(double scale, double x1, double y1, double x2, double y2, t_cal *plot, t_mlx *mlx)
+void	draw(double scale, double x1, double y1, double x2, double y2, t_cal *plot, t_mlx *mlx)//, int vert)
 {
-	float x, y, dx, dy, step;
- 	int i;
-
-	(void)plot;
-	(void)scale;
-	dx = (x2 - x1);
-	dy = (y2 - y1);
-	printf("x1 = %f\t\tx2 = %f\t\ty1 = %f\t\ty2 = %f\n", x1, x2, y1, y2);
-	if(fabs(dx) >= fabs(dy))
-		step = fabs(dx);
-	else
-		step = fabs(dy);
-	dx = dx / step;
-	dy = dy / step;
-	x = x1;
-	y = y1;
-	i = 1;
-	while(i <= step) 
+	if (y1 == y2)
 	{
-		mlx_pixel_put(mlx->init, mlx->win, (x - y) + 400, (x + y) / 2 + 200, 0xFF0000);
-		x += dx;
-		y += dy;
-		i++;
+		while(x1 <= x2)
+		{
+			mlx_pixel_put(mlx->init, mlx->win, (x1 - y1) + 400, (x1 + y1) / 2 + 200, 0xFFFF);
+			mlx_pixel_put(mlx->init, mlx->win, x1 + 200, y1 + 200, 0xFF0000);
+			x1++;
+		}
+	}
+	if (x1 == x2)
+	{
+		while(y1 <= (10 * scale) + y2)
+		{
+			mlx_pixel_put(mlx->init, mlx->win, (x1 - y1) + 400, (x1 + y1) / 2 + 200, 0xFFFF);
+			mlx_pixel_put(mlx->init, mlx->win, x1 + 200, y1 + 200, 0xFF0000);
+			y1++;
+		}
+	}
+	else if (y1 < y2)
+	{
+		while (x1 <= x2)
+		{
+			mlx_pixel_put(mlx->init, mlx->win, (x1 - y1) + 400, (x1 + y1) / 2 + 200, 0xFFFF);
+			mlx_pixel_put(mlx->init, mlx->win, x1 + 200, y1 + 200, 0xFF0000);
+			plot->mc += plot->m;
+			if (plot->mc >= 0.5)
+			{
+				plot->mc = -0.5;
+				y1++;
+				printf("yeh\n");
+			}
+			x1++;
+			plot->ix++;
+		}
+	}
+	else if (y2 < y1)
+	{
+		while (x1 <= x2)
+		{
+			mlx_pixel_put(mlx->init, mlx->win, (x1 - y1) + 400, (x1 + y1) / 2 + 200, 0xFFFF);
+			mlx_pixel_put(mlx->init, mlx->win, x1 + 200, y1 + 200, 0xFF0000);
+			plot->mc += plot->m;
+			if (plot->mc <= -0.5)
+			{
+				plot->mc = 0.5;
+				y1--;
+				printf("yey\n");
+			}
+			x1++;
+			plot->ix++;
+		}
 	}
 }
 
@@ -64,35 +91,37 @@ int		calc(t_cal *plot, t_array *newl, t_mlx *mlx)
 	double y2;
 	double scale;
 
-	scale = 15;
+	scale = 4;
 	plot->ia = 0;
 	plot->vx = 0;
-	while (newl->arrays[plot->ia])
+	while (newl->arrays[plot->ia])// && newl->arrays[plot->ia + 1])
 	{
 		plot->values[0] = ft_strsplit(newl->arrays[plot->ia], ' ');
 		x1 = 0;
-		x2 = scale;
+		x2 = 10 * scale;
 		while (plot->values[0][plot->vx] && plot->values[0][plot->vx + 1])
 		{
-			y1 = (double)ft_atoi(plot->values[0][plot->vx]) + scale * plot->ia;
-			y2 = (double)ft_atoi(plot->values[0][plot->vx + 1]) + scale * plot->ia;
-			drawDDA(scale, x1, y1, x2, y2, plot, mlx);
+			y1 = (double)ft_atoi(plot->values[0][plot->vx]) + ((10 * scale) * plot->ia);
+			y2 = (double)ft_atoi(plot->values[0][plot->vx + 1]) + ((10 *scale) * plot->ia);
+			plot->m = (y1 - y2)/(x1 - x2);
+			plot->mc = plot->m;
+			draw(scale, x1, y1, x2, y2, plot, mlx);//, 0);
 			x1 = x2;
-			x2 += scale;
+			x2 += (10 * scale);
 			plot->vx++;
 		}
 		if((plot->values[1] = ft_strsplit(newl->arrays[plot->ia + 1], ' ')))
 		{
 			x1 = 0;
-			x2 = scale;
 			plot->vx = 0;
 			while (plot->values[0][plot->vx] && plot->values[1][plot->vx])
 			{
-				y1 = (double)ft_atoi(plot->values[0][plot->vx]) + scale * plot->ia;
-				y2 = (double)ft_atoi(plot->values[1][plot->vx]) + scale * (plot->ia + 1);
-				drawDDA(scale, x1, y1, x1, y2, plot, mlx);
-				x1 = x2;
-				x2 += scale;
+				y1 = (double)ft_atoi(plot->values[0][plot->vx]) + ((10 * scale) * plot->ia);
+				y2 = (double)ft_atoi(plot->values[1][plot->vx]) + ((10 * scale) * plot->ia);
+				plot->m = (y1 - y2)/(x1 - x2);
+				plot->mc = plot->m;
+				draw(scale, x1, y1, x1, y2, plot, mlx);//, 1);
+				x1 += (10 * scale);
 				plot->vx++;
 			}
 			ft_strdel(plot->values[1]);
@@ -111,9 +140,8 @@ int		plot(t_mlx *mlxl, t_array *newl)
 	if(!(plot.values = (char ***)malloc(sizeof(char *) * 3)))
 		return (0);
 	plot.values[2] = NULL;
-	//	(void)newl;
-	//	(void)mlxl;
-	printf("arrays = %ld", sizeof(newl->arrays) * 1);
+//	(void)newl;
+//	(void)mlxl;
 	calc(&plot, newl, mlxl);
 	return (1) ;
 }

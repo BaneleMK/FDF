@@ -6,7 +6,7 @@
 #    By: bmkhize <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/05/19 14:56:05 by bmkhize           #+#    #+#              #
-#    Updated: 2018/07/16 16:07:21 by bmkhize          ###   ########.fr        #
+#    Updated: 2018/07/27 15:07:44 by bmkhize          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,12 +22,18 @@ all: $(NAME)
 
 $(NAME):
 	@ cd libft && make all
-	@ gcc $(FLAGS) $(FUNCTIONS) -L./libft -lft -o $(NAME)
+	@ gcc $(FLAGS) $(FUNCTIONS) -L./libft -lft -o $(NAME) -lmlx -framework OpenGL -framework AppKit
 	./fdf test.txt
 
 a:
-	@ gcc $(FLAGS) $(FUNCTIONS) -L./libft -lft -o $(NAME)
-	./fdf test.txt
+	@ gcc $(FLAGS) $(FUNCTIONS) -L./libft -lft -o $(NAME) -lmlx -framework OpenGL -framework AppKit
+	./fdf ../fdf_demo/maps/42.fdf
+
+og:
+	./../fdf_demo/fdf ../fdf_demo/maps/42.fdf
+
+norm:
+	norminette -r CheckForbiddenSourceHeader $(FUNCTIONS)
 
 clean:
 	@ cd libft && make fclean
